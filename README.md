@@ -76,18 +76,9 @@ A feature-rich React Native Super App with real-time chat, payments, mini-app SD
 
 ## Getting Started
 ```bash
-git clone https://github.com/your-username/super-app.git
+git clone https://github.com/hriteshMaikap/super-app-citi 
 cd super-app
 
-# Start React Native App
-cd mobile-app
-npm install
-npm start
-
-# Start Backend (in another terminal)
-cd backend
-npm install
-node server.js
 ````
 
 ## Contribution
