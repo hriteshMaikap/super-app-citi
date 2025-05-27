@@ -18,6 +18,8 @@ dependencies = [
     "pytest-asyncio>=1.0.0",
     "pymysql>=1.0.2",
     "python-dotenv>=1.0.0",
+    "pillow>=11.2.1",
+    "pytesseract>=0.3.13",
 ]
 
 [dependency-groups]

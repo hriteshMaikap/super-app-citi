@@ -1,5 +1,5 @@
 """
-Database configuration with async PostgreSQL
+Database configuration with async MySQL
 Banking-grade connection security and pooling
 """
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -50,6 +50,10 @@ async def create_tables():
     """Create all tables"""
     # Import models here to ensure they're registered with Base
     from ..models.user import User, UserSession
+    from ..models.kyc import (
+        KYCProfile, KYCDocument, BankAccount, 
+        PaymentCard, KYCVerificationLog
+    )
 
     # Check for existing tables
     try:

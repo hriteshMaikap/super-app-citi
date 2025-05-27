@@ -13,6 +13,7 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import create_tables
 from app.auth.router import router as auth_router
+from app.kyc.router import router as kyc_router
 
 # Configure logging
 logging.basicConfig(
@@ -40,7 +41,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="Banking-grade super-app backend with multi-service capabilities",
+    description="Banking-grade super-app backend with multi-service capabilities including KYC, payments, and messaging",
     docs_url="/api/docs" if settings.debug else None,
     redoc_url="/api/redoc" if settings.debug else None,
     lifespan=lifespan
@@ -90,6 +91,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Include routers
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(kyc_router, prefix="/api/v1")
 
 
 # Root endpoint
@@ -100,6 +102,7 @@ async def root():
         "message": "Super App Backend API",
         "version": settings.app_version,
         "status": "operational",
+        "services": ["authentication", "kyc", "payments", "messaging"],
         "docs": "/api/docs" if settings.debug else "Contact admin for API documentation"
     }
 
@@ -112,14 +115,20 @@ async def health_check():
         "status": "healthy",
         "service": "super-app-backend",
         "version": settings.app_version,
-        "environment": settings.environment
+        "environment": settings.environment,
+        "features": {
+            "authentication": "active",
+            "kyc": "active",
+            "payments": "coming_soon",
+            "messaging": "coming_soon"
+        }
     }
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "main:app",  # Using the module name relative to where it's run
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=settings.debug
