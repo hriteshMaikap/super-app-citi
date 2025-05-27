@@ -1,0 +1,209 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+// Sample data (replace with your backend state as needed)
+const wallet_balance = 25456.00;
+const transactions = [
+    { id: 1, type: 'Credit', amount: 5000, formatted_date: 'May 25, 2025', description: 'Salary' },
+    { id: 2, type: 'Debit', amount: 1500, formatted_date: 'May 26, 2025', description: 'Grocery Shopping' },
+    { id: 3, type: 'Debit', amount: 2000, formatted_date: 'May 27, 2025', description: 'Electricity Bill' },
+    { id: 4, type: 'Credit', amount: 1200, formatted_date: 'May 27, 2025', description: 'Refund' },
+];
+const quick_actions = [
+    { title: 'Add Money', icon: <Feather name="plus-circle" size={22} color="#007AFF" /> },
+    { title: 'Send Money', icon: <Feather name="send" size={22} color="#007AFF" /> },
+    { title: 'Withdraw', icon: <Feather name="arrow-down-circle" size={22} color="#007AFF" /> },
+    { title: 'Transaction History', icon: <MaterialCommunityIcons name="history" size={22} color="#007AFF" /> },
+];
+
+export default function WalletScreen() {
+    const router = useRouter();
+
+    return (
+        <ScrollView contentContainerStyle={styles.container}>
+            {/* Back to Home Button */}
+            <TouchableOpacity style={styles.backBtn} onPress={() => router.replace('/home')}>
+                <Ionicons name="arrow-back" size={22} color="#007AFF" />
+                <Text style={styles.backText}>Back to Home</Text>
+            </TouchableOpacity>
+
+            {/* Wallet Balance */}
+            <View style={styles.balanceCard}>
+                <View>
+                    <Text style={styles.balanceLabel}>Wallet Balance</Text>
+                    <Text style={styles.balanceAmount}>₹{wallet_balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</Text>
+                </View>
+                <Ionicons name="wallet" size={36} color="#0d7f3f" />
+            </View>
+
+            {/* Quick Actions */}
+            <View style={styles.quickActionsRow}>
+                {quick_actions.map((action, idx) => (
+                    <TouchableOpacity key={idx} style={styles.quickActionBtn}>
+                        {action.icon}
+                        <Text style={styles.quickActionText}>{action.title}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+
+            {/* Recent Transactions */}
+            <Text style={styles.sectionTitle}>Recent Transactions</Text>
+            <FlatList
+                data={transactions}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.transactionRow}>
+                        <View style={[
+                            styles.amountBox,
+                            item.type === 'Credit' ? styles.creditBox : styles.debitBox
+                        ]}>
+                            <Text style={styles.amountText}>
+                                {item.type === 'Credit' ? '+' : '-'}₹{item.amount}
+                            </Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.txnDesc}>{item.description}</Text>
+                            <Text style={styles.txnDate}>{item.formatted_date}</Text>
+                        </View>
+                        <Text style={[
+                            styles.txnType,
+                            item.type === 'Credit' ? styles.creditText : styles.debitText
+                        ]}>
+                            {item.type}
+                        </Text>
+                    </View>
+                )}
+                style={styles.txnList}
+                showsVerticalScrollIndicator={false}
+            />
+        </ScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flexGrow: 1,
+        padding: 18,
+        backgroundColor: '#f8f9fa'
+    },
+    backBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 18,
+        alignSelf: 'flex-start',
+    },
+    backText: {
+        color: '#007AFF',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginLeft: 6,
+    },
+    balanceCard: {
+        backgroundColor: '#fff',
+        borderRadius: 14,
+        padding: 24,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 24,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 2 }
+    },
+    balanceLabel: {
+        color: '#666',
+        fontSize: 16,
+        marginBottom: 6
+    },
+    balanceAmount: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#0d7f3f'
+    },
+    quickActionsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 28
+    },
+    quickActionBtn: {
+        flex: 1,
+        backgroundColor: '#eaf1ff',
+        borderRadius: 10,
+        alignItems: 'center',
+        paddingVertical: 14,
+        marginHorizontal: 5,
+        elevation: 1,
+    },
+    quickActionText: {
+        marginTop: 8,
+        fontSize: 13,
+        fontWeight: '500',
+        color: '#007AFF'
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#222',
+        marginBottom: 12,
+        marginTop: 8
+    },
+    txnList: {
+        marginBottom: 24
+    },
+    transactionRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 14,
+        marginBottom: 10,
+        elevation: 1,
+        shadowColor: '#000',
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 1 }
+    },
+    amountBox: {
+        width: 60,
+        height: 36,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 14
+    },
+    creditBox: {
+        backgroundColor: '#e6f4ea'
+    },
+    debitBox: {
+        backgroundColor: '#ffeaea'
+    },
+    amountText: {
+        fontWeight: 'bold',
+        fontSize: 15,
+        color: '#222'
+    },
+    txnDesc: {
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#222'
+    },
+    txnDate: {
+        fontSize: 12,
+        color: '#888'
+    },
+    txnType: {
+        fontSize: 13,
+        fontWeight: 'bold',
+        marginLeft: 10
+    },
+    creditText: {
+        color: '#0d7f3f'
+    },
+    debitText: {
+        color: '#ff3b30'
+    }
+});
