@@ -1,0 +1,38 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Banking-grade super-app backend with multi-service capabilities"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.12",
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.4.0",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.41",
+    "uvicorn>=0.34.2",
+    "pydantic-settings>=2.0.0",
+    "aiomysql>=0.1.1",
+    "pydantic[email]>=2.11.5",
+    "aiosqlite>=0.17.0",
+    "pytest-asyncio>=1.0.0",
+    "pymysql>=1.0.2",
+    "python-dotenv>=1.0.0",
+    "pillow>=11.2.1",
+    "pytesseract>=0.3.13",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "httpx>=0.28.1",
+    "isort>=6.0.1",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=1.0.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["app/tests"]
+pythonpath = ["."]
+asyncio_default_fixture_loop_scope = "function"
