@@ -248,11 +248,10 @@ class VectorSearchEngine:
         except Exception as e:
             logger.error(f"Filter check failed: {e}")
             return True  # If filter check fails, include the product
-    
     def get_product_by_id(self, product_id: str) -> Optional[Dict[str, Any]]:
-        """Get product by MongoDB ID"""
+        """Get product by MongoDB ID with fallback to local data"""
         try:
-            # Connect to MongoDB for real-time data
+            # First try to connect to MongoDB for real-time data
             client = MongoClient(settings.mongodb_uri)
             db = client[settings.mongodb_db_name]
             collection = db["products"]
@@ -263,15 +262,31 @@ class VectorSearchEngine:
                 # Convert ObjectId to string
                 product['_id'] = str(product['_id'])
                 return product
-            
-            return None
-            
+                
         except Exception as e:
-            logger.error(f"Failed to get product by ID: {e}")
-            return None
+            logger.error(f"Failed to get product from MongoDB: {e}, falling back to local data")
         finally:
             if 'client' in locals():
                 client.close()
+        
+        # Fallback to local JSON data if MongoDB is unavailable
+        try:
+            if os.path.exists(self.products_path):
+                with open(self.products_path, 'r') as f:
+                    data = json.load(f)
+                    products = data.get('products', [])
+                    
+                    # Search for product by ID
+                    for product in products:
+                        if str(product.get('_id')) == product_id:
+                            return product
+                            
+            logger.warning(f"Product {product_id} not found in local data")
+            return None
+            
+        except Exception as e:
+            logger.error(f"Failed to get product from local data: {e}")
+            return None
     
     def refresh_index(self):
         """Refresh the FAISS index with latest MongoDB data"""
