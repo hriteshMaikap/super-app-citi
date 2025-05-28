@@ -37,7 +37,13 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         return f"mysql+aiomysql://{self.mysql_user}:{self.mysql_pass}@{self.mysql_host}:{self.mysql_port}/{self.mysql_db}"
-      # Encryption
+    
+    # MongoDB Configuration (E-commerce)
+    mongodb_uri: str = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+    mongodb_db_name: str = os.getenv("MONGODB_DB_NAME", "superapp_ecommerce")
+    mongodb_schema_sample_size: int = int(os.getenv("MONGODB_SCHEMA_SAMPLE_SIZE", "100"))
+    
+    # Encryption
     encryption_key: str = os.getenv("ENCRYPTION_KEY", secrets.token_urlsafe(32))
     salt_rounds: int = int(os.getenv("SALT_ROUNDS", "12"))
     

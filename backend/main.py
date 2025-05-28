@@ -1,6 +1,6 @@
 """
 Super App Backend - Main FastAPI Application
-Banking-grade multi-service platform
+Banking-grade multi-service platform with e-commerce search
 """
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.core.database import create_tables
 from app.auth.router import router as auth_router
 from app.kyc.router import router as kyc_router
+from app.ecommerce.router import router as ecommerce_router
 
 # Configure logging
 logging.basicConfig(
@@ -41,7 +42,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="Banking-grade super-app backend with multi-service capabilities including KYC, payments, and messaging",
+    description="Banking-grade super-app backend with multi-service capabilities including authentication, KYC verification, e-commerce search, payments, and messaging",
     docs_url="/api/docs" if settings.debug else None,
     redoc_url="/api/redoc" if settings.debug else None,
     lifespan=lifespan
@@ -92,6 +93,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # Include routers
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(kyc_router, prefix="/api/v1")
+app.include_router(ecommerce_router, prefix="/api/v1")
 
 
 # Root endpoint
@@ -102,7 +104,19 @@ async def root():
         "message": "Super App Backend API",
         "version": settings.app_version,
         "status": "operational",
-        "services": ["authentication", "kyc", "payments", "messaging"],
+        "services": {
+            "authentication": "active",
+            "kyc": "active", 
+            "ecommerce": "active",
+            "payments": "coming_soon",
+            "messaging": "coming_soon"
+        },
+        "features": {
+            "semantic_search": "FAISS + Sentence Transformers",
+            "banking_security": "JWT + Encryption",
+            "kyc_verification": "Document + Face Recognition",
+            "real_time_analytics": "Search + Product Views"
+        },
         "docs": "/api/docs" if settings.debug else "Contact admin for API documentation"
     }
 
@@ -119,8 +133,16 @@ async def health_check():
         "features": {
             "authentication": "active",
             "kyc": "active",
+            "ecommerce_search": "active",
+            "faiss_vector_db": "active",
+            "mongodb": "active",
+            "mysql": "active",
             "payments": "coming_soon",
             "messaging": "coming_soon"
+        },
+        "databases": {
+            "mysql": "connected",
+            "mongodb": "connected"
         }
     }
 

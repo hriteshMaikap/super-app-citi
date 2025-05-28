@@ -54,6 +54,7 @@ async def create_tables():
         KYCProfile, KYCDocument, BankAccount, 
         PaymentCard, KYCVerificationLog
     )
+    from ..models.ecommerce import SearchQuery, ProductView, UserWishlist
 
     # Check for existing tables
     try:
